@@ -1,6 +1,6 @@
-#ENGLISH
+# ENGLISH
 
-#Let banned players play on your server
+# Let banned players play on your server
 
 Instead of forbidding banned players from connecting to your server, now they can join, but can't do anything on it. They are ghosts.
 
@@ -12,7 +12,7 @@ To Ghostban a player without ULX or when 'ulx ban' is replaced, the command is !
 
 To open the config menu, the command is /ghostban
 
-##Features :
+## Features :
 
 A huge config is available with an In-Game panel, no need to change a config file. You control everything in game. To show it, type '/ghostban' in the chat
 
@@ -40,9 +40,9 @@ Ghosts can...
 - Change language to English, French or Russian
 
 
-#FRENCH
+# FRENCH
 
-#Laissez les joueurs bannis jouer sur votre serveur
+# Laissez les joueurs bannis jouer sur votre serveur
 
 Au lieu d'une simple interdiction de se connecter, les joueurs bannis pourrons venir sur votre serveur, mais ne pourrons rien faire dessus, ce sont des fantômes
 
@@ -54,7 +54,7 @@ Pour Ghostban un joueur sans ULX, la commande est !ban / !unban
 
 Pour ouvrir le menu de configuration, la commande est /ghostban
 
-##Fonctionnalités :
+## Fonctionnalités :
 
 Un très grande configuration est disponible avec un panel In-Game, plus besoin d'aller modifier directement les fichiers, vous contrôlez tout dans le jeu, pour l'afficher tapez "/ghostban" dans le chat
 
