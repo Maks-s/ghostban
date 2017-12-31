@@ -2,7 +2,7 @@ GhostBan = GhostBan or {}
 
 hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
 	if string.Trim(text) == "/ghostban" then
-		if ply ~= LocalPlayer()  || !ply:IsAdmin()  then
+		if ply ~= LocalPlayer() || !ply:IsAdmin() then
 			return true
 		end
 		local PANEL = {}
@@ -102,8 +102,18 @@ hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
 		PANEL.hurt:SetText("Can hurt players")
 		PANEL.hurt:SizeToContents()
 		PANEL.hurt:SetValue(GhostBan.CanHurt)
-		PANEL.language = vgui.Create("DComboBox", PANEL.window)
-		PANEL.language:SetPos(250, 150)
+		PANEL.freeze = vgui.Create("DCheckBoxLabel", PANEL.window)
+		PANEL.freeze:SetPos(250, 150)
+		PANEL.freeze:SetText("Is frozen, can't move")
+		PANEL.freeze:SizeToContents()
+		PANEL.freeze:SetValue(GhostBan.freezeGhost)
+		PANEL.jailMode = vgui.Create("DCheckBoxLabel", PANEL.window)
+		PANEL.jailMode:SetPos(250, 170)
+		PANEL.jailMode:SetText("JailMode")
+		PANEL.jailMode:SizeToContents()
+		PANEL.jailMode:SetValue(GhostBan.jailMode)
+		PANEL.language = vgui.Create("DComboBox", PANEL.window) -- freeze jail changejob
+		PANEL.language:SetPos(250, 190)
 		PANEL.language:AddChoice("EN")
 		PANEL.language:AddChoice("FR")
 		PANEL.language:AddChoice("RU")
@@ -111,13 +121,20 @@ hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
 		PANEL.language:SetWidth(40)
 		if ulx then
 			PANEL.repULX = vgui.Create("DCheckBoxLabel", PANEL.window)
-			PANEL.repULX:SetPos(250, 180)
+			PANEL.repULX:SetPos(250, 215)
 			PANEL.repULX:SetText("Replace ulx ban")
 			PANEL.repULX:SizeToContents()
 			PANEL.repULX:SetValue(GhostBan.ReplaceULXBan)
 		end
+		if --[[ DarkRP--]]true  then
+			PANEL.changeJob = vgui.Create("DCheckBoxLabel", PANEL.window)
+			PANEL.changeJob:SetPos(250, 235)
+			PANEL.changeJob:SetText("Can change job (DarkRP)")
+			PANEL.changeJob:SizeToContents()
+			PANEL.changeJob:SetValue(GhostBan.canChangeJob)
+		end
 		PANEL.save = vgui.Create("DButton", PANEL.window)
-		PANEL.save:SetPos(250, 200)
+		PANEL.save:SetPos(250, 260)
 		PANEL.save:SetText("Save")
 		function PANEL.save:DoClick()
 			net.Start("ghost_ban_net")
@@ -139,10 +156,15 @@ hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
 				['mGame'] = PANEL.mGame:GetChecked(),
 				['ghostText'] = PANEL.ghostText:GetChecked(),
 				['hurt'] = PANEL.hurt:GetChecked(),
-				['lang'] = PANEL.language:GetOptionText(PANEL.language:GetSelectedID()) or GhostBan.Language
+				['lang'] = PANEL.language:GetOptionText(PANEL.language:GetSelectedID()) or GhostBan.Language,
+				['freezer'] = PANEL.freeze:GetChecked(),
+				['jailmode'] = PANEL.jailMode:GetChecked(),
 			}
 			if ulx then
 				settings['repULX'] = PANEL.repULX:GetChecked()
+			end
+			if DarkRP then
+				settings['changejob'] = PANEL.changeJob:GetChecked()
 			end
 			net.WriteTable(settings)
 			net.SendToServer()

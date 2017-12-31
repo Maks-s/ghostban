@@ -117,3 +117,11 @@ if GhostBan.CanCollide ~= 2 then
 		end
 	end)
 end
+
+if !GhostBan.canChangeJob && DarkRP then
+	hook.Add("playerCanChangeTeam", "GhostBan_CantChangeJob",function(ply, jobName)
+		if GhostBan.ghosts[ply] then
+			return false, "Ghosts are ghosts, not " .. team.GetName(jobName)
+		end
+	end)
+end

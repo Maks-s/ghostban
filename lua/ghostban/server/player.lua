@@ -4,8 +4,12 @@ GhostBan.ghosts = GhostBan.ghosts or {}
 local meta = FindMetaTable("Player")
 
 function meta:Ghostban(unghost, time, reason)
-	net.Start("ghost_ban_net")
 	if !unghost then
+		if !GhostBan.jailMode && #player.GetAll() >= game.MaxPlayers() then
+			self:Kick(reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"])
+			return
+		end
+		net.Start("ghost_ban_net")
 		net.WriteUInt(0,2)
 		if GhostBan.DisplayReason then -- don't send reason when we don't need it
 			local compReason = util.Compress( (reason && reason ~= "") && reason || GhostBan.Translation[GhostBan.Language]["noreason"] )
@@ -16,7 +20,7 @@ function meta:Ghostban(unghost, time, reason)
 			time = 0
 		end
 		GhostBan.ghosts[self] = time
-		net.WriteUInt(time, 16)
+		net.WriteUInt(time, 32)
 		net.Send(self)
 		if !GhostBan.Loadouts then
 			self:StripWeapons()
@@ -31,6 +35,9 @@ function meta:Ghostban(unghost, time, reason)
 		else
 			self:SetAvoidPlayers(false)
 		end
+		if GhostBan.freezeGhost then
+			self:Freeze(true)
+		end
 		net.Start("ghost_ban_net")
 		net.WriteUInt(2,2)
 		net.WriteBool(true)
@@ -39,6 +46,7 @@ function meta:Ghostban(unghost, time, reason)
 		self:SetMaterial("models/props_combine/portalball001_sheet")
 	else
 		GhostBan.ghosts[self] = nil
+		net.Start("ghost_ban_net")
 		net.WriteUInt(1,2)
 		net.Send(self)
 		net.Start("ghost_ban_net")
@@ -58,13 +66,16 @@ function meta:Ghostban(unghost, time, reason)
 			self.ghostbanCustColl = nil
 			return
 		end
+		if GhostBan.freezeGhost && self:IsFlagSet(FL_FROZEN) then
+			self:Freeze(false)
+		end
 		self:SetCustomCollisionCheck(false)
 		self:SetMaterial()
 	end
 end
 
 hook.Add("PlayerConnect", "GhostBan_APlayerIsJoining", function()
-	if #player.GetAll() + 2 >= game.MaxPlayers() then
+	if #GhostBan.ghosts > 0 && #player.GetAll() + 1 >= game.MaxPlayers() && !GhostBan.jailMode then
 		GhostBan.ghosts[math.random(#GhostBan.ghosts)]:Kick(GhostBan.Translation[GhostBan.Language]["TooMuch4U"])
 	end
 end)

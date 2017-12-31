@@ -52,10 +52,9 @@ local function ghostban( calling_ply, target_ply, time, reason )
 	ulx.fancyLogAdmin( calling_ply, str, target_ply, time, reason )
 end
 
-local ghostbanCmd
 if GhostBan.ReplaceULXBan then
 	timer.Simple(0, function()
-		ghostbanCmd = ulx.command( "Utility", "ulx ban", ghostban, "!ban", false, false, true )
+		local ghostbanCmd = ulx.command( "Utility", "ulx ban", ghostban, "!ban", false, false, true )
 		ghostbanCmd:addParam{ type=ULib.cmds.PlayerArg }
 		ghostbanCmd:addParam{ type=ULib.cmds.NumArg, hint="minutes, 0 for perma", ULib.cmds.optional, ULib.cmds.allowTimeString, min=0 }
 		ghostbanCmd:addParam{ type=ULib.cmds.StringArg, hint="reason", ULib.cmds.optional, ULib.cmds.takeRestOfLine, completes=ulx.common_kick_reasons }
@@ -63,7 +62,7 @@ if GhostBan.ReplaceULXBan then
 		ghostbanCmd:help( "Ghostban target" )
 	end)
 else
-	ghostbanCmd = ulx.command( "Utility", "ulx ghostban", ghostban, "!ghostban", false, false, true )
+	local ghostbanCmd = ulx.command( "Utility", "ulx ghostban", ghostban, "!ghostban", false, false, true )
 	ghostbanCmd:addParam{ type=ULib.cmds.PlayerArg }
 	ghostbanCmd:addParam{ type=ULib.cmds.NumArg, hint="minutes, 0 for perma", ULib.cmds.optional, ULib.cmds.allowTimeString, min=0 }
 	ghostbanCmd:addParam{ type=ULib.cmds.StringArg, hint="reason", ULib.cmds.optional, ULib.cmds.takeRestOfLine, completes=ulx.common_kick_reasons }
@@ -82,16 +81,15 @@ local function unghostban( calling_ply, target_ply )
 	ulx.fancyLogAdmin( calling_ply, "#A unghostbanned #T", target_ply )
 end
 
-local unghostbanCmd
 if GhostBan.ReplaceULXBan then
 	timer.Simple(0, function()
-		unghostbanCmd = ulx.command( "Utility", "ulx unban", unghostban, "!unban", false, false, true )
+		local unghostbanCmd = ulx.command( "Utility", "ulx unban", unghostban, "!unban", false, false, true )
 		unghostbanCmd:addParam{ type=ULib.cmds.PlayerArg }
 		unghostbanCmd:defaultAccess( ULib.ACCESS_ADMIN )
 		unghostbanCmd:help( "Unghostban target" )
 	end)
 else
-	unghostbanCmd = ulx.command( "Utility", "ulx unghostban", unghostban, "!unghostban", false, false, true )
+	local unghostbanCmd = ulx.command( "Utility", "ulx unghostban", unghostban, "!unghostban", false, false, true )
 	unghostbanCmd:addParam{ type=ULib.cmds.PlayerArg }
 	unghostbanCmd:defaultAccess( ULib.ACCESS_ADMIN )
 	unghostbanCmd:help( "Unghostban target" )

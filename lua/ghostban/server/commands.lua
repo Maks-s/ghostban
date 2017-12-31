@@ -93,7 +93,6 @@ concommand.Add("gh_ban", function(ply, _, args, argStr)
 	else
 		time = tonumber(time) * 60
 	end
-	print(args[1] .. " " ..args[2])
 	local tReason = string.Trim(string.Replace(string.Implode(" ",args), args[1] .. " " ..args[2]))
 	if !tReason || tReason == "" then 
 		tReason = GhostBan.Translation[GhostBan.Language]["noreason"]

@@ -18,6 +18,11 @@ GhostBan.CanOpenPropsMenu = false -- Ghost can open props menu
 GhostBan.CanOpenGameMenu = true -- Ghost can open game menu
 GhostBan.DisplayCyanGhost = true -- Display 'GHOST' above the ghost
 GhostBan.ReplaceULXBan = false -- ulx ban is replaced with ulx ghostban
+
+GhostBan.freezeGhost = false -- Ghost is frozen, it can't move - Thanks http://steamcommunity.com/profiles/76561198150594616 for the idea
+GhostBan.jailMode = false -- In jail mode, Ghostban is used to jail instead of banning - Thanks http://steamcommunity.com/profiles/76561198022486540 for the idea
+GhostBan.canChangeJob = false -- Ghost can change job (DarkRP)
+
 GhostBan.Language = "EN"
 
 -- Translations, text can be replaced by {nick}, {steamid}, {steamid64}

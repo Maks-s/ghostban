@@ -109,7 +109,7 @@ net.Receive("ghost_ban_net",function()
 		if GhostBan.DisplayReason then
 			reason = util.Decompress(net.ReadData(net.ReadUInt(16)))
 		end
-		local time = net.ReadUInt(16)
+		local time = net.ReadUInt(32)
 		ghostYourself(time, reason)
 	elseif mode == 1 then
 		if timer.Exists("GhostBan_TimeCooldown") then
@@ -149,6 +149,9 @@ net.Receive("ghost_ban_net",function()
 		GhostBan.Language = settings[18]
 		GhostBan.ReplaceULXBan = settings[19]
 		GhostBan.CanTool = settings[20]
+		GhostBan.freezeGhost = settings[21]
+		GhostBan.jailMode = settings[22]
+		GhostBan.canChangeJob = settings[23]
 
 		-- ghost can't collide
 		if GhostBan.CanCollide ~= 2 then
