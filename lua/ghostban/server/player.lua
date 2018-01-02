@@ -84,6 +84,9 @@ function meta:Ghostban(unghost, time, reason)
 		if !(GhostBan.material == "" || GhostBan.CantSeeMe) then
 			self:SetMaterial()
 		end
+		if GhostBan.setPos ~= Vector() then
+			self:Respawn()
+		end
 	end
 end
 
