@@ -1,3 +1,15 @@
+concommand.Add("ghostban_setpos", function(ply)
+	if !ply:IsAdmin() then return end
+	GhostBan.setPos = ply:GetPos() + Vector(0,0,5)
+	ply:PrintMessage(HUD_PRINTCONSOLE,"Position set")
+end)
+
+concommand.Add("ghostban_unsetpos",function(ply)
+	if !ply:IsAdmin() then return end
+	GhostBan.setPos = Vector()
+	ply:PrintMessage(HUD_PRINTCONSOLE,"Position unset")
+end)
+
 if file.Exists("ulib","LUA") then return end
 -- You don't use ulx eh ? Well we don't need it after all
 GhostBan = GhostBan or {}

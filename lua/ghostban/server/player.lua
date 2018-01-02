@@ -5,8 +5,8 @@ local meta = FindMetaTable("Player")
 
 function meta:Ghostban(unghost, time, reason)
 	if !unghost then
-		if !GhostBan.jailMode && #player.GetAll() >= game.MaxPlayers() then
-			self:Kick(reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"])
+		if !GhostBan.jailMode && GhostBan.percentKick ~= 0 && #player.GetAll() / game.MaxPlayers() >= GhostBan.percentKick / 100 then
+			self:Kick("You're banned for the following reason :\n" .. (reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"]))
 			return
 		end
 		net.Start("ghost_ban_net")
@@ -43,7 +43,15 @@ function meta:Ghostban(unghost, time, reason)
 		net.WriteBool(true)
 		net.WriteUInt(self:EntIndex() - 1,7)
 		net.Broadcast()
-		self:SetMaterial("models/props_combine/portalball001_sheet")
+		if !(GhostBan.material == "" || GhostBan.CantSeeMe) then
+			self:SetMaterial(GhostBan.material)
+		end
+		if GhostBan.CantSeeMe then
+			self:DrawShadow(false)
+		end
+		if GhostBan.setPos ~= Vector() then
+			self:SetPos(GhostBan.setPos)
+		end
 	else
 		GhostBan.ghosts[self] = nil
 		net.Start("ghost_ban_net")
@@ -62,6 +70,9 @@ function meta:Ghostban(unghost, time, reason)
 		else
 			self:SetAvoidPlayers(true)
 		end
+		if GhostBan.CantSeeMe then
+			self:DrawShadow(true)
+		end
 		if self.ghostbanCustColl then
 			self.ghostbanCustColl = nil
 			return
@@ -70,12 +81,31 @@ function meta:Ghostban(unghost, time, reason)
 			self:Freeze(false)
 		end
 		self:SetCustomCollisionCheck(false)
-		self:SetMaterial()
+		if !(GhostBan.material == "" || GhostBan.CantSeeMe) then
+			self:SetMaterial()
+		end
 	end
 end
 
 hook.Add("PlayerConnect", "GhostBan_APlayerIsJoining", function()
-	if #GhostBan.ghosts > 0 && #player.GetAll() + 1 >= game.MaxPlayers() && !GhostBan.jailMode then
-		GhostBan.ghosts[math.random(#GhostBan.ghosts)]:Kick(GhostBan.Translation[GhostBan.Language]["TooMuch4U"])
+	if table.Count(GhostBan.ghosts) > 0 && !GhostBan.jailMode && GhostBan.percentKick ~= 0 && #player.GetAll() / game.MaxPlayers() >= GhostBan.percentKick / 100 then
+		local _, victim = table.Random(GhostBan.ghosts)
+		victim:Kick(GhostBan.Translation[GhostBan.Language]["TooMuch4U"])
 	end
 end)
+
+if GhostBan.percentKick ~= 0 then
+	hook.Add("CheckPassword","GhostBan_CheckP455w0rd", function(steamid64)
+		if #player.GetAll() / game.MaxPlayers() <= GhostBan.percentKick / 100 then return end
+		if ULib then
+			local banData = ULib.bans[ util.SteamIDFrom64(steamid64) ]
+			if !banData then return end
+			reason = banData.reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"]
+		else
+			local banData = GhostBan.bans[ util.SteamIDFrom64(steamid64) ]
+			if !banData then return end
+			reason = banData.reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"]
+		end
+		return false, "You're banned for the following reason :\n" .. reason
+	end)
+end

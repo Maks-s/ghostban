@@ -10,161 +10,138 @@ hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
 		PANEL.window:SetSize(440,360)
 		PANEL.window:Center()
 		PANEL.window:SetTitle("GhostBan config")
+		function PANEL.window:Paint(w,h)
+			draw.RoundedBox(5,0,0,w,h,Color(100,100,100))
+			draw.RoundedBoxEx(5,0,0,w,25,Color(70,70,70),true,true)
+		end 
+		PANEL.scroll = vgui.Create("DScrollPanel",PANEL.window)
+		PANEL.scroll:Dock(FILL)
 		PANEL.window:MakePopup()
-		PANEL.spawnprop = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.spawnprop:SetPos(5, 30)
-		PANEL.spawnprop:SetText("Can spawn props")
-		PANEL.spawnprop:SizeToContents()
-		PANEL.spawnprop:SetValue(GhostBan.CanSpawnProps)
-		PANEL.property = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.property:SetPos(5, 50)
-		PANEL.property:SetText("Can use property")
-		PANEL.property:SizeToContents()
-		PANEL.property:SetValue(GhostBan.CanProperty)
-		PANEL.tool = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.tool:SetPos(5, 70)
-		PANEL.tool:SetText("Can use tool")
-		PANEL.tool:SizeToContents()
-		PANEL.tool:SetValue(GhostBan.CanTool)
-		PANEL.voice = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.voice:SetPos(5, 90)
-		PANEL.voice:SetText("Can talk with its voice")
-		PANEL.voice:SizeToContents()
-		PANEL.voice:SetValue(GhostBan.CanTalkVoice)
-		PANEL.tChat = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.tChat:SetPos(5, 110)
-		PANEL.tChat:SetText("Can talk with the chat")
-		PANEL.tChat:SizeToContents()
-		PANEL.tChat:SetValue(GhostBan.CanTalkChat)
-		PANEL.loadout = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.loadout:SetPos(5, 130)
-		PANEL.loadout:SetText("Have its loadout")
-		PANEL.loadout:SizeToContents()
-		PANEL.loadout:SetValue(GhostBan.Loadouts)
-		PANEL.item = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.item:SetPos(5, 150)
-		PANEL.item:SetText("Can pickup items")
-		PANEL.item:SizeToContents()
-		PANEL.item:SetValue(GhostBan.CanPickupItem)
-		PANEL.wep = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.wep:SetPos(5, 170)
-		PANEL.wep:SetText("Can pickup weapons")
-		PANEL.wep:SizeToContents()
-		PANEL.wep:SetValue(GhostBan.CanPickupWep)
-		PANEL.vehicle = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.vehicle:SetPos(5, 190)
-		PANEL.vehicle:SetText("Can enter vehicles")
-		PANEL.vehicle:SizeToContents()
-		PANEL.vehicle:SetValue(GhostBan.CanEnterVehicle)
-		PANEL.suicide = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.suicide:SetPos(5, 210)
-		PANEL.suicide:SetText("Can suicide")
-		PANEL.suicide:SizeToContents()
-		PANEL.suicide:SetValue(GhostBan.CanSuicide)
-		PANEL.collideText = vgui.Create("DLabel", PANEL.window)
-		PANEL.collideText:SetText("Ghosts don't collide with...\n\n\nWarning: If activated, ghosts can't be hurt")
-		PANEL.collideText:SetPos(6, 240)
-		PANEL.collideText:SizeToContents()
-		PANEL.collide = vgui.Create("DComboBox", PANEL.window)
-		PANEL.collide:SetPos(5, 255)
-		PANEL.collide:AddChoice("Players", 0)
-		PANEL.collide:AddChoice("Everything", 1)
-		PANEL.collide:AddChoice("Nothing", 2)
-		PANEL.collide:ChooseOptionID(GhostBan.CanCollide+1)
-		PANEL.collide:SetWidth(100)
-		PANEL.lowHud = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.lowHud:SetPos(250, 30)
-		PANEL.lowHud:SetText("Display reason on ghost's hud")
-		PANEL.lowHud:SizeToContents()
-		PANEL.lowHud:SetValue(GhostBan.DisplayReason)
-		PANEL.mContext = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.mContext:SetPos(250, 50)
-		PANEL.mContext:SetText("Can open context menu")
-		PANEL.mContext:SizeToContents()
-		PANEL.mContext:SetValue(GhostBan.CanOpenContextMenu)
-		PANEL.mProps = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.mProps:SetPos(250, 70)
-		PANEL.mProps:SetText("Can open props menu")
-		PANEL.mProps:SizeToContents()
-		PANEL.mProps:SetValue(GhostBan.CanOpenPropsMenu)
-		PANEL.mGame = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.mGame:SetPos(250, 90)
-		PANEL.mGame:SetText("Can open game menu")
-		PANEL.mGame:SizeToContents()
-		PANEL.mGame:SetValue(GhostBan.CanOpenGameMenu)
-		PANEL.ghostText = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.ghostText:SetPos(250, 110)
-		PANEL.ghostText:SetText("Display ghost above ghost head")
-		PANEL.ghostText:SizeToContents()
-		PANEL.ghostText:SetValue(GhostBan.DisplayCyanGhost)
-		PANEL.hurt = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.hurt:SetPos(250, 130)
-		PANEL.hurt:SetText("Can hurt players")
-		PANEL.hurt:SizeToContents()
-		PANEL.hurt:SetValue(GhostBan.CanHurt)
-		PANEL.freeze = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.freeze:SetPos(250, 150)
-		PANEL.freeze:SetText("Is frozen, can't move")
-		PANEL.freeze:SizeToContents()
-		PANEL.freeze:SetValue(GhostBan.freezeGhost)
-		PANEL.jailMode = vgui.Create("DCheckBoxLabel", PANEL.window)
-		PANEL.jailMode:SetPos(250, 170)
-		PANEL.jailMode:SetText("JailMode")
-		PANEL.jailMode:SizeToContents()
-		PANEL.jailMode:SetValue(GhostBan.jailMode)
-		PANEL.language = vgui.Create("DComboBox", PANEL.window) -- freeze jail changejob
-		PANEL.language:SetPos(250, 190)
-		PANEL.language:AddChoice("EN")
-		PANEL.language:AddChoice("FR")
-		PANEL.language:AddChoice("RU")
-		PANEL.language:ChooseOption(GhostBan.Language)
-		PANEL.language:SetWidth(40)
+		local function createCheckBox(name, text, value)
+			PANEL[name] = PANEL.scroll:Add("DCheckBoxLabel")
+			PANEL[name]:Dock(TOP)
+			PANEL[name]:SetText(text)
+			PANEL[name]:DockMargin(5,0,10,5)
+			PANEL[name]:SetValue(value)
+		end
+		createCheckBox("spawnprop", "Ghosts can spawn props", GhostBan.CanSpawnProps)
+		createCheckBox("property", "Ghosts can use property", GhostBan.CanProperty)
+		createCheckBox("tool", "Ghosts can use the toolgun", GhostBan.CanTool)
+		createCheckBox("voice", "Ghosts can talk with their voice", GhostBan.CanTalkVoice)
+		createCheckBox("tChat", "Ghosts can talk with the chat", GhostBan.CanTalkChat)
+		createCheckBox("loadout", "Ghosts have their weapons when they spawn", GhostBan.Loadouts)
+		createCheckBox("item", "Ghosts can pickup items", GhostBan.CanPickupItem)
+		createCheckBox("wep", "Ghosts can pickup weapons", GhostBan.CanPickupWep)
+		createCheckBox("vehicle", "Ghosts can enter vehicles", GhostBan.CanEnterVehicle)
+		createCheckBox("suicide", "Ghosts can suicide", GhostBan.CanSuicide)
+		PANEL['collideText'] = PANEL.scroll:Add("DLabel")
+		PANEL['collideText']:SetText("Ghosts don't collide with... (Warning: If activated, ghosts can't be hurt)")
+		PANEL['collideText']:Dock(TOP)
+		PANEL['collideText']:DockMargin(5,0,10,5)
+		PANEL['collideText']:SizeToContents()
+		PANEL['collide'] = PANEL.scroll:Add("DComboBox")
+		PANEL['collide']:Dock(TOP)
+		PANEL['collide']:DockMargin(5,0,10,5)
+		PANEL['collide']:AddChoice("Players", 0)
+		PANEL['collide']:AddChoice("Everything", 1)
+		PANEL['collide']:AddChoice("Nothing", 2)
+		PANEL['collide']:ChooseOptionID(GhostBan.CanCollide+1)
+		createCheckBox("lowHud", "Display reason of ban at the bottom of the screen", GhostBan.DisplayReason)
+		createCheckBox("mContext", "Ghosts can open the context menu", GhostBan.CanOpenContextMenu)
+		createCheckBox("mProps", "Ghosts can open the props menu", GhostBan.CanOpenPropsMenu)
+		createCheckBox("mGame", "Ghosts can open the game menu", GhostBan.CanOpenGameMenu)
+		createCheckBox("ghostText", "Display 'GHOST' above ghost's head", GhostBan.DisplayCyanGhost)
+		createCheckBox("hurt", "Ghosts can hurt players", GhostBan.CanHurt)
+		createCheckBox("freeze", "Ghosts are frozen, they can't move", GhostBan.freezeGhost)
+		createCheckBox("jailMode", "JailMode : If you want to use Ghostban to jail and not to ban", GhostBan.jailMode)
+		createCheckBox("seeMe", "Ghosts are invisible", GhostBan.CantSeeMe)
+		--createCheckBox("superhot", "Lower time left only when player is on the server", GhostBan.SuperHot)
 		if ulx then
-			PANEL.repULX = vgui.Create("DCheckBoxLabel", PANEL.window)
-			PANEL.repULX:SetPos(250, 215)
-			PANEL.repULX:SetText("Replace ulx ban")
-			PANEL.repULX:SizeToContents()
-			PANEL.repULX:SetValue(GhostBan.ReplaceULXBan)
+			createCheckBox("repULX", "Replace 'ulx ban' command", GhostBan.ReplaceULXBan)
 		end
-		if --[[ DarkRP--]]true  then
-			PANEL.changeJob = vgui.Create("DCheckBoxLabel", PANEL.window)
-			PANEL.changeJob:SetPos(250, 235)
-			PANEL.changeJob:SetText("Can change job (DarkRP)")
-			PANEL.changeJob:SizeToContents()
-			PANEL.changeJob:SetValue(GhostBan.canChangeJob)
+		if DarkRP then
+			createCheckBox("changeJob", "Ghosts can change job (DarkRP)", GhostBan.canChangeJob)
 		end
-		PANEL.save = vgui.Create("DButton", PANEL.window)
-		PANEL.save:SetPos(250, 260)
+		PANEL['percentKickText'] = PANEL.scroll:Add("DLabel")
+		PANEL['percentKickText']:SetText("Percent of players before ghosts are kicked and can't join the server (0 to disable)")
+		PANEL['percentKickText']:Dock(TOP)
+		PANEL['percentKickText']:DockMargin(5,0,10,5)
+		PANEL['percentKickText']:SizeToContents()
+		PANEL['percentKick'] = PANEL.scroll:Add("DNumSlider")
+		PANEL['percentKick']:Dock(TOP)
+		PANEL['percentKick']:DockMargin(5,0,10,5)
+		PANEL['percentKick'].PerformLayout = nil -- remove label
+		PANEL['percentKick']:SetMinMax(0, 100)
+		PANEL['percentKick']:SetDecimals(0)
+		PANEL['percentKick']:SetValue(GhostBan.percentKick)
+		PANEL['percentKick'].TextArea:SetDrawLanguageID(false)
+		PANEL['percentKick'].TextArea:SetTextColor(Color(230,230,230))
+		PANEL['materialText'] = PANEL.scroll:Add("DLabel")
+		PANEL['materialText']:SetText("Set ghost material to : ( leave blank to not change the material )")
+		PANEL['materialText']:Dock(TOP)
+		PANEL['materialText']:DockMargin(5,0,10,5)
+		PANEL['materialText']:SizeToContents()
+		PANEL['material'] = PANEL.scroll:Add("DTextEntry")
+		PANEL['material']:Dock(TOP)
+		PANEL['material']:DockMargin(5,0,10,5)
+		PANEL['material']:SetText(GhostBan.material)
+		PANEL['material']:SetDrawLanguageID(false)
+		PANEL['language'] = PANEL.scroll:Add("DComboBox")
+		PANEL['language']:Dock(TOP)
+		PANEL['language']:DockMargin(5,0,10,5)
+		PANEL['language']:AddChoice("English", "EN")
+		PANEL['language']:AddChoice("Français", "FR")
+		PANEL['language']:AddChoice("русский", "RU")
+		if GhostBan.Language == "EN" then
+			PANEL['language']:ChooseOptionID(1)
+		elseif GhostBan.Language == "FR" then
+			PANEL['language']:ChooseOptionID(2)
+		else
+			PANEL['language']:ChooseOptionID(3)
+		end
+		PANEL.save = PANEL.scroll:Add("DButton")
+		PANEL.save:Dock(TOP)
+		PANEL.save:DockMargin(5,0,10,5)
 		PANEL.save:SetText("Save")
 		function PANEL.save:DoClick()
+			local material = PANEL['material']:GetText()
+			if material ~= "" && Material(material):IsError() then -- invalid material
+				notification.AddLegacy("Invalid material", NOTIFY_ERROR, 3)
+				surface.PlaySound("buttons/button10.wav")
+				return
+			end
 			net.Start("ghost_ban_net")
 			local settings = {
-				['spawnprop'] = PANEL.spawnprop:GetChecked(),
-				['property'] = PANEL.property:GetChecked(),
-				['tool'] = PANEL.tool:GetChecked(),
-				['voice'] = PANEL.voice:GetChecked(),
-				['tChat'] = PANEL.tChat:GetChecked(),
-				['loadout'] = PANEL.loadout:GetChecked(),
-				['item'] = PANEL.item:GetChecked(),
-				['wep'] = PANEL.wep:GetChecked(),
-				['vehicle'] = PANEL.vehicle:GetChecked(),
-				['suicide'] = PANEL.suicide:GetChecked(),
-				['collide'] = PANEL.collide:GetOptionData(PANEL.collide:GetSelectedID()),
-				['lowHud'] = PANEL.lowHud:GetChecked(),
-				['mContext'] = PANEL.mContext:GetChecked(),
-				['mProps'] = PANEL.mProps:GetChecked(),
-				['mGame'] = PANEL.mGame:GetChecked(),
-				['ghostText'] = PANEL.ghostText:GetChecked(),
-				['hurt'] = PANEL.hurt:GetChecked(),
-				['lang'] = PANEL.language:GetOptionText(PANEL.language:GetSelectedID()) or GhostBan.Language,
-				['freezer'] = PANEL.freeze:GetChecked(),
-				['jailmode'] = PANEL.jailMode:GetChecked(),
+				['spawnprop'] = PANEL['spawnprop']:GetChecked(),
+				['property'] = PANEL['property']:GetChecked(),
+				['tool'] = PANEL['tool']:GetChecked(),
+				['voice'] = PANEL['voice']:GetChecked(),
+				['tChat'] = PANEL['tChat']:GetChecked(),
+				['loadout'] = PANEL['loadout']:GetChecked(),
+				['item'] = PANEL['item']:GetChecked(),
+				['wep'] = PANEL['wep']:GetChecked(),
+				['vehicle'] = PANEL['vehicle']:GetChecked(),
+				['suicide'] = PANEL['suicide']:GetChecked(),
+				['collide'] = PANEL['collide']:GetOptionData(PANEL['collide']:GetSelectedID()),
+				['lowHud'] = PANEL['lowHud']:GetChecked(),
+				['mContext'] = PANEL['mContext']:GetChecked(),
+				['mProps'] = PANEL['mProps']:GetChecked(),
+				['mGame'] = PANEL['mGame']:GetChecked(),
+				['ghostText'] = PANEL['ghostText']:GetChecked(),
+				['hurt'] = PANEL['hurt']:GetChecked(),
+				['lang'] = PANEL['language']:GetOptionData(PANEL['language']:GetSelectedID()) or GhostBan.Language,
+				['freezer'] = PANEL['freeze']:GetChecked(),
+				['jailmode'] = PANEL['jailMode']:GetChecked(),
+				['seeme'] = PANEL['seeMe']:GetChecked(),
+				['material'] = PANEL['material']:GetText(),
+				-- ['superhot'] = PANEL['superhot']:GetChecked(),
+				['kPercent'] = PANEL['percentKick'].TextArea:GetValue() -- Get from TextArea because it doesn't have decimal
 			}
 			if ulx then
-				settings['repULX'] = PANEL.repULX:GetChecked()
+				settings['repULX'] = PANEL['repULX']:GetChecked()
 			end
 			if DarkRP then
-				settings['changejob'] = PANEL.changeJob:GetChecked()
+				settings['changejob'] = PANEL['changeJob']:GetChecked()
 			end
 			net.WriteTable(settings)
 			net.SendToServer()

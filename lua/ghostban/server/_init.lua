@@ -24,11 +24,15 @@ local function loadConfig(settings)
 		GhostBan.Language = settings["lang"]
 		GhostBan.freezeGhost = settings["freezer"]
 		GhostBan.jailMode = settings["jailmode"]
+		GhostBan.CantSeeMe = settings["seeme"]
+		GhostBan.material = settings["material"]
+		-- GhostBan.SuperHot = settings["superhot"]
+		GhostBan.percentKick = tonumber(settings["kPercent"])
 		if settings["repULX"] then
-			GhostBan.ReplaceULXBan = settings["repULX"] or GhostBan.ReplaceULXBan
+			GhostBan.ReplaceULXBan = settings["repULX"]
 		end
 		if settings["changejob"] then
-			GhostBan.canChangeJob = settings["changejob"] or GhostBan.canChangeJob
+			GhostBan.canChangeJob = settings["changejob"]
 		end
 		file.Write("ghostban_config.txt", util.TableToJSON(GhostBan))
 		if #player.GetHumans() == 0 then return end
@@ -57,7 +61,11 @@ local function loadConfig(settings)
 			GhostBan.CanTool,
 			GhostBan.freezeGhost,
 			GhostBan.jailMode,
-			GhostBan.canChangeJob
+			GhostBan.canChangeJob,
+			GhostBan.CantSeeMe,
+			GhostBan.material,
+			GhostBan.percentKick,
+			-- GhostBan.SuperHot
 		})
 		net.Broadcast()
 	else
@@ -74,10 +82,6 @@ hook.Add("PlayerInitialSpawn","GhostBan_PISCheck",function(ply)
 	if ULib && !GhostBan.jailMode then
 		local banData = ULib.bans[ ply:SteamID() ]
 		if !banData then return end -- not banned
-		if #player.GetAll() >= game.MaxPlayers() then
-			ply:Kick(banData.reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"])
-			return
-		end
 		local ghostSentence = GhostBan.Translation[GhostBan.Language]["ghostingS"]
 		ghostSentence = string.Replace(ghostSentence, "{nick}", ply:Nick())
 		ghostSentence = string.Replace(ghostSentence, "{steamid}", ply:SteamID())
@@ -91,10 +95,6 @@ hook.Add("PlayerInitialSpawn","GhostBan_PISCheck",function(ply)
 	else
 		local banData = GhostBan.bans[ ply:SteamID() ]
 		if !banData then return end -- not banned
-		if !GhostBan.jailMode && #player.GetAll() >= game.MaxPlayers() then
-			ply:Kick(banData.reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"])
-			return
-		end
 		local ghostSentence = GhostBan.Translation[GhostBan.Language]["ghostingS"]
 		ghostSentence = string.Replace(ghostSentence, "{nick}", ply:Nick())
 		ghostSentence = string.Replace(ghostSentence, "{steamid}", ply:SteamID())
@@ -170,7 +170,11 @@ hook.Add("PlayerAuthed", "GhostBan_TellEmSettings", function(ply)
 		GhostBan.CanTool,
 		GhostBan.freezeGhost,
 		GhostBan.jailMode,
-		GhostBan.canChangeJob
+		GhostBan.canChangeJob,
+		GhostBan.CantSeeMe,
+		GhostBan.material,
+		GhostBan.percentKick,
+		-- GhostBan.SuperHot,
 	})
 	net.Send(ply)
 end)

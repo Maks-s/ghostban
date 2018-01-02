@@ -152,6 +152,10 @@ net.Receive("ghost_ban_net",function()
 		GhostBan.freezeGhost = settings[21]
 		GhostBan.jailMode = settings[22]
 		GhostBan.canChangeJob = settings[23]
+		GhostBan.CantSeeMe = settings[24]
+		GhostBan.material = settings[25]
+		GhostBan.percentKick = settings[26]
+		--GhostBan.SuperHot = settings[27]
 
 		-- ghost can't collide
 		if GhostBan.CanCollide ~= 2 then
@@ -167,6 +171,7 @@ net.Receive("ghost_ban_net",function()
 		else
 			hook.Remove("ShouldCollide", "GhostBan_CantTouchThis")
 		end
+		-- show a ghost text above ghost head
 		if GhostBan.DisplayCyanGhost then
 			surface.CreateFont("GhostBan_PlyFont", {
 				font = "Arial",
@@ -184,6 +189,14 @@ net.Receive("ghost_ban_net",function()
 			end)
 		else
 			hook.Remove("PostPlayerDraw", "GhostBan_MarkTheGhost")
+		end
+		-- invisible ghost
+		if GhostBan.CantSeeMe then
+			hook.Add("PrePlayerDraw","GhostBan_InvisibleGhost",function(ply)
+				if GhostBan.ghosts[ply] then return true end
+			end)
+		else
+			hook.Remove("PrePlayerDraw","GhostBan_InvisibleGhost")
 		end
 	end
 end)

@@ -9,7 +9,7 @@ local function escapeOrNull( str )
 end
 
 local function ghostban( calling_ply, target_ply, time, reason )
-	if target_ply:IsBot() then
+	if target_ply:IsBot() && !GhostBan.jailMode then
 		ULib.tsayError( calling_ply, "This player is immune to ghostbanning", true )
 		return
 	end
@@ -18,27 +18,35 @@ local function ghostban( calling_ply, target_ply, time, reason )
 		return	
 	end
 	time = time * 60
-	-- write ban
 	local tReason = (reason && reason ~= "") && reason || GhostBan.Translation[GhostBan.Language]["noreason"]
-	sql.Query(
-			"REPLACE INTO ulib_bans (steamid, time, unban, reason, name, admin, modified_admin, modified_time) " ..
-			string.format( "VALUES (%s, %i, %i, %s, %s, %s, %s, %s)",
-				target_ply:SteamID64(),
-				os.time(),
-				(time == 0) && 0 || os.time() + time,
-				escapeOrNull( tReason ),
-				escapeOrNull( target_ply:Nick() ),
-				escapeOrNull( calling_ply:Nick() ),
-				"NULL",
-				"NULL"
-			)
-	)
-	ULib.bans[target_ply:SteamID()] = {
-		['reason'] = tReason,
-		['time'] = os.time(),
-		['unban'] = (time == 0) && 0 || os.time() + time,
-		['admin'] = calling_ply:Nick()
-	}
+	-- write ban
+	if !GhostBan.jailMode then
+		sql.Query(
+				"REPLACE INTO ulib_bans (steamid, time, unban, reason, name, admin, modified_admin, modified_time) " ..
+				string.format( "VALUES (%s, %i, %i, %s, %s, %s, %s, %s)",
+					target_ply:SteamID64(),
+					os.time(),
+					(time == 0) && 0 || os.time() + time,
+					escapeOrNull( tReason ),
+					escapeOrNull( target_ply:Nick() ),
+					escapeOrNull( calling_ply:Nick() ),
+					"NULL",
+					"NULL"
+				)
+		)
+		ULib.bans[target_ply:SteamID()] = {
+			['reason'] = tReason,
+			['time'] = os.time(),
+			['unban'] = (time == 0) && 0 || os.time() + time,
+			['admin'] = calling_ply:Nick(),
+			['name'] = target_ply:Nick()
+		}
+	else
+		GhostBan.bans[target_ply:SteamID()] = {
+			unban = (time == 0) && 0 || os.time() + time,
+			reason = tReason
+		}
+	end
 	target_ply:Ghostban(false, time, tReason)
 	local str = "#A ghostbanned #T"
 	if time > 0 then 
