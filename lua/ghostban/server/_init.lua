@@ -122,7 +122,9 @@ hook.Add("Initialize", "GhostBan_HookInit", function()
 		end)
 	else
 		if file.Exists("ghostban_bans.txt", "DATA") then
-			GhostBan.bans = util.JSONToTable( file.Read("ghostban_bans.txt") )
+			GhostBan.bans = util.JSONToTable( file.Read("ghostban_bans.txt") ) or {}
+		else
+			GhostBan.bans = {}
 		end
 	end
 end)
