@@ -11,7 +11,8 @@ concommand.Add("ghostban_unsetpos",function(ply)
 end)
 
 if file.Exists("ulib","LUA") then return end
--- You don't use ulx eh ? Well we don't need it after all
+if file.Exists("gamemodes/clockwork","GAME") || Clockwork then return end
+
 GhostBan = GhostBan or {}
 GhostBan.bans = GhostBan.bans or {}
 

@@ -79,39 +79,40 @@ end
 loadConfig()
 
 hook.Add("PlayerInitialSpawn","GhostBan_PISCheck",function(ply)
+	local timeToBan, reason
 	if ULib && !GhostBan.jailMode then
 		local banData = ULib.bans[ ply:SteamID() ]
 		if !banData then return end -- not banned
-		local ghostSentence = GhostBan.Translation[GhostBan.Language]["ghostingS"]
-		ghostSentence = string.Replace(ghostSentence, "{nick}", ply:Nick())
-		ghostSentence = string.Replace(ghostSentence, "{steamid}", ply:SteamID())
-		ghostSentence = string.Replace(ghostSentence, "{steamid64}", ply:SteamID64())
-		Msg(ghostSentence)
 		if banData.unban && tonumber(banData.unban) > 0 then
-			ply:Ghostban(false, tonumber(banData.unban) - os.time(), banData.reason)
-		else
-			ply:Ghostban(false, 0, banData.reason)
+			timeToBan = tonumber(banData.unban) - os.time()
 		end
+		reason = banData.reason
+	elseif Clockwork && !GhostBan.jailMode then
+		local banData = Clockwork.bans.stored[ply:IPAddress()] || Clockwork.bans.stored[ply:SteamID()]
+		if !banData then return end -- not banned
+		if banData.unbanTime && tonumber(banData.unbanTime) > 0 then
+			timeToBan = tonumber(banData.unban) - os.time()
+		end
+		reason = banData.reason
 	else
 		local banData = GhostBan.bans[ ply:SteamID() ]
 		if !banData then return end -- not banned
-		local ghostSentence = GhostBan.Translation[GhostBan.Language]["ghostingS"]
-		ghostSentence = string.Replace(ghostSentence, "{nick}", ply:Nick())
-		ghostSentence = string.Replace(ghostSentence, "{steamid}", ply:SteamID())
-		ghostSentence = string.Replace(ghostSentence, "{steamid64}", ply:SteamID64())
-		Msg(ghostSentence)
 		if banData.unban && tonumber(banData.unban) > 0 then
-			local time = tonumber(banData.unban) - os.time()
-			if time <= 0 then
+			timeToBan = tonumber(banData.unban) - os.time()
+			if timeToBan <= 0 then
 				GhostBan.bans[ply:SteamID()] = nil
 				file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
 				return
 			end
-			ply:Ghostban(false, time, banData.reason)
-		else
-			ply:Ghostban(false, 0, banData.reason)
 		end
+		reason = banData.reason
 	end
+	local ghostSentence = GhostBan.Translation[GhostBan.Language]["ghostingS"]
+	ghostSentence = string.Replace(ghostSentence, "{nick}", ply:Nick())
+	ghostSentence = string.Replace(ghostSentence, "{steamid}", ply:SteamID())
+	ghostSentence = string.Replace(ghostSentence, "{steamid64}", ply:SteamID64())
+	Msg(ghostSentence)
+	ply:Ghostban(false, timeToBan, reason)
 end)
 
 hook.Add("Initialize", "GhostBan_HookInit", function()
@@ -120,6 +121,8 @@ hook.Add("Initialize", "GhostBan_HookInit", function()
 		hook.Add("ULibPlayerBanned", "GhostBan_RemoveSourceBan", function(steamid)
 			game.ConsoleCommand("removeid " .. steamid .. ";writeid\n")
 		end)
+	elseif Clockwork && !GhostBan.jailMode then
+		GAMEMODE.CheckPassword = function() end
 	else
 		if file.Exists("ghostban_bans.txt", "DATA") then
 			GhostBan.bans = util.JSONToTable( file.Read("ghostban_bans.txt") ) or {}
@@ -133,7 +136,7 @@ timer.Create("GhostBan_CheckGhostsTMR", 1, 0, function()
 	for ply, time in pairs(GhostBan.ghosts) do
 		if time == 1 || time < 0 then
 			GhostBan.ghosts[ply] = nil
-			if !ULib then
+			if !ULib || !Clockwork then
 				GhostBan.bans[ply:SteamID()] = nil
 				file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
 			end

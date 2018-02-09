@@ -98,17 +98,22 @@ hook.Add("PlayerConnect", "GhostBan_APlayerIsJoining", function()
 end)
 
 if GhostBan.percentKick ~= 0 then
-	hook.Add("CheckPassword","GhostBan_CheckP455w0rd", function(steamid64)
+	hook.Add("CheckPassword","GhostBan_CheckP455w0rd", function(steamid64, ip)
 		if #player.GetAll() / game.MaxPlayers() <= GhostBan.percentKick / 100 then return end
+		local reason
 		if ULib then
 			local banData = ULib.bans[ util.SteamIDFrom64(steamid64) ]
 			if !banData then return end
-			reason = banData.reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"]
+			reason = banData.reason
+		elseif Clockwork then
+			local banData = Clockwork.bans.stored[ util.SteamIDFrom64(steamid64) ] || Clockwork.bans.stored[ip]
+			if !banData then return end
+			reason = banData.reason
 		else
 			local banData = GhostBan.bans[ util.SteamIDFrom64(steamid64) ]
 			if !banData then return end
-			reason = banData.reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"]
+			reason = banData.reason
 		end
-		return false, "You're banned for the following reason :\n" .. reason
+		return false, "You're banned for the following reason :\n" .. ( reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"] )
 	end)
 end
