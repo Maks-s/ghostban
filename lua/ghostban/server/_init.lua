@@ -28,8 +28,8 @@ local function loadConfig(settings)
 		GhostBan.material = settings["material"]
 		-- GhostBan.SuperHot = settings["superhot"]
 		GhostBan.percentKick = tonumber(settings["kPercent"])
-		if settings["repULX"] then
-			GhostBan.ReplaceULXBan = settings["repULX"]
+		if settings["repDEF"] then
+			GhostBan.replaceDefBan = settings["repDEF"]
 		end
 		if settings["changejob"] then
 			GhostBan.canChangeJob = settings["changejob"]
@@ -55,9 +55,8 @@ local function loadConfig(settings)
 			GhostBan.CanOpenPropsMenu,
 			GhostBan.CanOpenGameMenu,
 			GhostBan.DisplayCyanGhost,
-			GhostBan.ReplaceULXBan,
 			GhostBan.Language,
-			GhostBan.ReplaceULXBan,
+			GhostBan.replaceDefBan,
 			GhostBan.CanTool,
 			GhostBan.freezeGhost,
 			GhostBan.jailMode,
@@ -169,9 +168,8 @@ hook.Add("PlayerAuthed", "GhostBan_TellEmSettings", function(ply)
 		GhostBan.CanOpenPropsMenu,
 		GhostBan.CanOpenGameMenu,
 		GhostBan.DisplayCyanGhost,
-		GhostBan.ReplaceULXBan,
 		GhostBan.Language,
-		GhostBan.ReplaceULXBan,
+		GhostBan.replaceDefBan,
 		GhostBan.CanTool,
 		GhostBan.freezeGhost,
 		GhostBan.jailMode,

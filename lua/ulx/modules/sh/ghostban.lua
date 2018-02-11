@@ -60,7 +60,7 @@ local function ghostban( calling_ply, target_ply, time, reason )
 	ulx.fancyLogAdmin( calling_ply, str, target_ply, time, reason )
 end
 
-if GhostBan.ReplaceULXBan then
+if GhostBan.replaceDefBan then
 	timer.Simple(0, function()
 		local ghostbanCmd = ulx.command( "Utility", "ulx ban", ghostban, "!ban", false, false, true )
 		ghostbanCmd:addParam{ type=ULib.cmds.PlayerArg }
@@ -89,7 +89,7 @@ local function unghostban( calling_ply, target_ply )
 	ulx.fancyLogAdmin( calling_ply, "#A unghostbanned #T", target_ply )
 end
 
-if GhostBan.ReplaceULXBan then
+if GhostBan.replaceDefBan then
 	timer.Simple(0, function()
 		local unghostbanCmd = ulx.command( "Utility", "ulx unban", unghostban, "!unban", false, false, true )
 		unghostbanCmd:addParam{ type=ULib.cmds.PlayerArg }

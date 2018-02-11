@@ -60,17 +60,17 @@ local function parseText(text, time, reason, callingNick, targetNick)
 end
 
 hook.Add("PlayerSay", "GhostBan_ChattyPlayer", function(ply, text)
-	if text == "!ban" then
+	if text == "!ghostban" then
 		ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["ban_usage"])
 		return
-	elseif text == "!unban" then
+	elseif text == "!unghostban" then
 		ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["unban_usage"])
 		return
 	end
-	if string.StartWith(text, "!ban ") then 
-		ply:ConCommand("gh_ban"..string.TrimLeft(text,"!ban"))
+	if string.StartWith(text, "!ghostban ") then 
+		ply:ConCommand("gh_ban"..string.TrimLeft(text,"!ghostban"))
 	elseif string.StartWith(text, "!unban ") then
-		ply:ConCommand("gh_unban"..string.TrimLeft(text,"!unban"))		
+		ply:ConCommand("gh_unban"..string.TrimLeft(text,"!unghostban"))		
 	end
 end)
 
