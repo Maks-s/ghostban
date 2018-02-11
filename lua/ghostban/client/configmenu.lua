@@ -137,7 +137,7 @@ hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
 			-- ['superhot'] = PANEL['superhot']:GetChecked(),
 			['kPercent'] = PANEL['percentKick'].TextArea:GetValue() -- Get from TextArea because it doesn't have decimal
 		}
-		if ulx then
+		if ulx || Clockwork then
 			settings['repDEF'] = PANEL['repDEF']:GetChecked()
 		end
 		if DarkRP then
