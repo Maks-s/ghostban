@@ -1,10 +1,6 @@
 GhostBan = GhostBan or {}
 
-hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
-	if string.Trim(text) ~= "/ghostban" then return end
-	if ply ~= LocalPlayer() || !ply:IsAdmin() then
-		return true
-	end
+local function showGhostBanMenu()
 	local PANEL = {}
 	PANEL.window = vgui.Create("DFrame")
 	PANEL.window:SetSize(440,360)
@@ -147,5 +143,19 @@ hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
 		net.SendToServer()
 		PANEL.window:Close()
 	end
+end
+
+hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
+	if string.Trim(text) ~= "/ghostban" then return end
+	if ply ~= LocalPlayer() || !ply:IsAdmin() then
+		return true
+	end
+	showGhostBanMenu()
 	return true
 end)
+
+if Clockwork then
+	net.Receive("GhostBan_Clockwork_Commands",function()
+		showGhostBanMenu()
+	end)
+end
