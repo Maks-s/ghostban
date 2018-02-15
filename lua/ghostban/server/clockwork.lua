@@ -176,7 +176,7 @@ function COMMAND:OnRun(player, arguments)
 	if Clockwork.player:IsProtected(arguments[1]) then
 		local target = Clockwork.player:FindByID(arguments[1])
 		if target then
-			Clockwork.player:Notify(player, {"PlayerHasProtectionStatus", target:Nick()})
+			Clockwork.player:Notify(player, {"PlayerHasProtectionStatus", target:Name()})
 		else
 			Clockwork.player:Notify(player, {"PlayerHasProtectionOffline"})
 		end
@@ -193,15 +193,15 @@ function COMMAND:OnRun(player, arguments)
 			return
 		end
 		if duration <= 0 then
-			Clockwork.player:NotifyAll({"PlayerBannedPlayerPerma", player:Nick(), steamName, reason})
+			Clockwork.player:NotifyAll({"PlayerBannedPlayerPerma", player:Name(), steamName, reason})
 			return
 		end
 		local hours = math.Round(duration / 3600)
 		if hours >= 1 then
-			Clockwork.player:NotifyAll({"PlayerBannedPlayerHours", player:Nick(), steamName, hours, reason})
+			Clockwork.player:NotifyAll({"PlayerBannedPlayerHours", player:Name(), steamName, hours, reason})
 			return
 		end
-		Clockwork.player:NotifyAll({"PlayerBannedPlayerMinutes", player:Nick(), steamName, math.Round(duration / 60), reason})
+		Clockwork.player:NotifyAll({"PlayerBannedPlayerMinutes", player:Name(), steamName, math.Round(duration / 60), reason})
 	end)
 end
 
@@ -226,7 +226,7 @@ function COMMAND:OnRun(player, arguments)
 	local identifier = string.upper(arguments[1])
 	
 	if Clockwork.bans.stored[identifier] then
-		Clockwork.player:NotifyAll({"PlayerUnbannedPlayer", player:Nick(), Clockwork.bans.stored[identifier].steamName})
+		Clockwork.player:NotifyAll({"PlayerUnbannedPlayer", player:Name(), Clockwork.bans.stored[identifier].steamName})
 		removeBan(identifier)
 		return
 	end
