@@ -86,7 +86,7 @@ concommand.Add("gh_ban", function(ply, _, args, argStr)
 	end
 	local target_ply
 	for _, v in pairs(player.GetHumans()) do
-		if string.lower(v:Nick()):find(args[1]) then
+		if string.lower(v:Name()):find(args[1]) then
 			target_ply = v
 			break
 		end
@@ -123,7 +123,7 @@ concommand.Add("gh_ban", function(ply, _, args, argStr)
 		finalStr = finalStr .. " permanently"
 	end
 	if tReason && tReason ~= "" then finalStr = finalStr .. " ({reason})" end
-	PrintMessage(HUD_PRINTTALK, parseText(finalStr, time, tReason, (IsValid(ply)) && ply:Nick() || "Console", target_ply:Nick()) )
+	PrintMessage(HUD_PRINTTALK, parseText(finalStr, time, tReason, (IsValid(ply)) && ply:Name() || "Console", target_ply:Name()) )
 end)
 
 concommand.Add("gh_unban", function(ply, _, args)
@@ -138,7 +138,7 @@ concommand.Add("gh_unban", function(ply, _, args)
 	end
 	local target_ply
 	for _, v in pairs(player.GetHumans()) do
-		if string.lower(v:Nick()):find(args[1]) then
+		if string.lower(v:Name()):find(args[1]) then
 			target_ply = v
 			break
 		end
@@ -162,5 +162,5 @@ concommand.Add("gh_unban", function(ply, _, args)
 	GhostBan.bans[target_ply:SteamID()] = nil
 	file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
 	target_ply:Ghostban(true)
-	PrintMessage(HUD_PRINTTALK, parseText("{caller} unbanned {target}", nil, nil, (IsValid(ply)) && ply:Nick() || "Console", target_ply:Nick() ) )
+	PrintMessage(HUD_PRINTTALK, parseText("{caller} unbanned {target}", nil, nil, (IsValid(ply)) && ply:Name() || "Console", target_ply:Name() ) )
 end)

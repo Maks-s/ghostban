@@ -28,8 +28,8 @@ local function ghostban( calling_ply, target_ply, time, reason )
 					os.time(),
 					(time == 0) && 0 || os.time() + time,
 					escapeOrNull( tReason ),
-					escapeOrNull( target_ply:Nick() ),
-					escapeOrNull( calling_ply:Nick() ),
+					escapeOrNull( target_ply:Name() ),
+					escapeOrNull( calling_ply:Name() ),
 					"NULL",
 					"NULL"
 				)
@@ -38,8 +38,8 @@ local function ghostban( calling_ply, target_ply, time, reason )
 			['reason'] = tReason,
 			['time'] = os.time(),
 			['unban'] = (time == 0) && 0 || os.time() + time,
-			['admin'] = calling_ply:Nick(),
-			['name'] = target_ply:Nick()
+			['admin'] = calling_ply:Name(),
+			['name'] = target_ply:Name()
 		}
 	else
 		GhostBan.bans[target_ply:SteamID()] = {

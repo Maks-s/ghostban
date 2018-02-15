@@ -30,7 +30,7 @@ end
 
 local function parseText(text, time, reason)
 	local ply = LocalPlayer()
-	text = string.Replace(text, "{nick}", ply:Nick())
+	text = string.Replace(text, "{nick}", ply:Name())
 	text = string.Replace(text, "{steamid}", ply:SteamID())
 	text = string.Replace(text, "{steamid64}", ply:SteamID64())
 	if time then

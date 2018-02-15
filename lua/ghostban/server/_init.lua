@@ -107,7 +107,7 @@ hook.Add("PlayerInitialSpawn","GhostBan_PISCheck",function(ply)
 		reason = banData.reason
 	end
 	local ghostSentence = GhostBan.Translation[GhostBan.Language]["ghostingS"]
-	ghostSentence = string.Replace(ghostSentence, "{nick}", ply:Nick())
+	ghostSentence = string.Replace(ghostSentence, "{nick}", ply:Name())
 	ghostSentence = string.Replace(ghostSentence, "{steamid}", ply:SteamID())
 	ghostSentence = string.Replace(ghostSentence, "{steamid64}", ply:SteamID64())
 	Msg(ghostSentence)
