@@ -1,4 +1,20 @@
-if !(file.Exists("gamemodes/clockwork","GAME") || Clockwork) then return end
+--[[-------------------------------------------------------------------------
+Add /ghostban as a clockwork command
+---------------------------------------------------------------------------]]
+
+local COMMAND = Clockwork.command:New("ghostban")
+
+COMMAND.tip = "Open Ghostban config menu"
+COMMAND.access = "o"
+
+function COMMAND:OnRun(ply)
+	net.Start("GhostBan_Clockwork_Commands")
+	net.Send(ply)
+end
+
+COMMAND:Register()
+
+if !GhostBan.replaceDefBan then return end
 
 --[[-------------------------------------------------------------------------
 Replace default plyBan command
@@ -154,30 +170,9 @@ end
 
 hook.Add("Initialize", "GhostBan_ReplaceClockwork", function()
 
---[[-------------------------------------------------------------------------
-Add /ghostban as a clockwork command
----------------------------------------------------------------------------]]
-
-local COMMAND = Clockwork.command:New("ghostban")
-
-COMMAND.tip = "Open Ghostban config menu"
-COMMAND.text = ""
-COMMAND.flags = CMD_DEFAULT
-COMMAND.access = "o"
-COMMAND.arguments = 0
-
-function COMMAND:OnRun(ply)
-	net.Start("GhostBan_Clockwork_Commands")
-	net.Send(ply)
-end
-
-COMMAND:Register()
-
-if !GhostBan.replaceDefBan then return end
-
 -- replace plyBan
 
-COMMAND = Clockwork.command:New("PlyBan")
+local COMMAND = Clockwork.command:New("PlyBan")
 
 COMMAND.tip = "Ban a player from the server."
 COMMAND.text = "<string Name|SteamID|IPAddress> <number Minutes> [string Reason]"
