@@ -52,6 +52,9 @@ GhostBan.Translation = {
 		["404"] = "(GhostBan) 404: Player not found",
 		["notWhatUThink"] = "This player isn't a ghost",
 		["TooMuch4U"] = "Too many players, kicking ghost",
+		["invalidSteamid"] = "Invalid SteamID",
+		["ghbanid_usage"] = "Usage: gh_banid \"<SteamID>\" [time (minutes)] [reason]",
+		["unghbanid_usage"] = "Usage: gh_unbanid \"<SteamID>\"",
 	},
 	["FR"] = {
 		["noreason"] = "pas de raison",
@@ -74,6 +77,9 @@ GhostBan.Translation = {
 		["404"] = "(GhostBan) 404: Joueur introuvable",
 		["notWhatUThink"] = "Ce joueur n'est pas un fantome",
 		["TooMuch4U"] = "Trop de joueurs, kick des fantomes",
+		["invalidSteamid"] = "SteamID invalide",
+		["ghbanid_usage"] = "Usage: gh_banid \"<SteamID>\" [temps (minutes)] [raison]",
+		["unghbanid_usage"] = "Usage: gh_unbanid \"<SteamID>\"",
 	},
 	["RU"] = {
 		["noreason"] = "причина не указана",
@@ -96,5 +102,8 @@ GhostBan.Translation = {
 		["404"] = "(GhostBan) 404: Игрок не найден",
 		["notWhatUThink"] = "Этот игрок не призрак",
 		["TooMuch4U"] = "Слишком много игроков, kick призраки",
+		["invalidSteamid"] = "недействительный SteamID",
+		["ghbanid_usage"] = "заявка: gh_banid \"<SteamID>\" [время (минут)] [причина]",
+		["unghbanid_usage"] = "заявка: gh_unbanid \"<SteamID>\"",
 	},
 }

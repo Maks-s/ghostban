@@ -5,6 +5,11 @@ local meta = FindMetaTable("Player")
 
 function meta:Ghostban(unghost, time, reason)
 	if !unghost then
+		local ghostSentence = GhostBan.Translation[GhostBan.Language]["ghostingS"]
+		ghostSentence = string.Replace(ghostSentence, "{nick}", self:Nick())
+		ghostSentence = string.Replace(ghostSentence, "{steamid}", self:SteamID())
+		ghostSentence = string.Replace(ghostSentence, "{steamid64}", self:SteamID64())
+		print(ghostSentence)
 		if !GhostBan.jailMode && GhostBan.percentKick ~= 0 && #player.GetAll() / game.MaxPlayers() >= GhostBan.percentKick / 100 then
 			self:Kick("You're banned for the following reason :\n" .. (reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"]))
 			return

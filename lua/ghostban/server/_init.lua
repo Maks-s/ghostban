@@ -79,32 +79,27 @@ end
 loadConfig()
 
 hook.Add("PlayerInitialSpawn","GhostBan_PISCheck",function(ply)
+	local steamid = ply:SteamID() or "error"
 	if ULib && !GhostBan.jailMode then
-		local banData = ULib.bans[ ply:SteamID() ]
+		local banData = ULib.bans[steamid]
 		if !banData then return end -- not banned
-		local ghostSentence = GhostBan.Translation[GhostBan.Language]["ghostingS"]
-		ghostSentence = string.Replace(ghostSentence, "{nick}", ply:Nick())
-		ghostSentence = string.Replace(ghostSentence, "{steamid}", ply:SteamID())
-		ghostSentence = string.Replace(ghostSentence, "{steamid64}", ply:SteamID64())
-		Msg(ghostSentence)
 		if banData.unban && tonumber(banData.unban) > 0 then
-			ply:Ghostban(false, tonumber(banData.unban) - os.time(), banData.reason)
+			local timeToBan = tonumber(banData.unban) - os.time()
+			if timeToBan <= 0 then
+				ULib.unban(steamid)
+				return
+			end
+			ply:Ghostban(false, timeToBan, banData.reason)
 		else
 			ply:Ghostban(false, 0, banData.reason)
 		end
 	else
-		local banData = GhostBan.bans[ ply:SteamID() ]
+		local banData = GhostBan.bans[steamid]
 		if !banData then return end -- not banned
-		local ghostSentence = GhostBan.Translation[GhostBan.Language]["ghostingS"]
-		ghostSentence = string.Replace(ghostSentence, "{nick}", ply:Nick())
-		ghostSentence = string.Replace(ghostSentence, "{steamid}", ply:SteamID())
-		ghostSentence = string.Replace(ghostSentence, "{steamid64}", ply:SteamID64())
-		Msg(ghostSentence)
 		if banData.unban && tonumber(banData.unban) > 0 then
 			local time = tonumber(banData.unban) - os.time()
 			if time <= 0 then
-				GhostBan.bans[ply:SteamID()] = nil
-				file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
+				GhostBan.bans[steamid] = nil
 				return
 			end
 			ply:Ghostban(false, time, banData.reason)
@@ -135,7 +130,6 @@ timer.Create("GhostBan_CheckGhostsTMR", 1, 0, function()
 			GhostBan.ghosts[ply] = nil
 			if !ULib then
 				GhostBan.bans[ply:SteamID()] = nil
-				file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
 			end
 			ply:Ghostban(true)
 			continue

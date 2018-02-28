@@ -1,17 +1,20 @@
 concommand.Add("ghostban_setpos", function(ply)
 	if !ply:IsAdmin() then return end
 	GhostBan.setPos = ply:GetPos() + Vector(0,0,5)
+	file.Write("ghostban_config.txt", util.TableToJSON(GhostBan))
 	ply:PrintMessage(HUD_PRINTCONSOLE,"Position set")
 end)
 
 concommand.Add("ghostban_unsetpos",function(ply)
 	if !ply:IsAdmin() then return end
 	GhostBan.setPos = Vector()
+	file.Write("ghostban_config.txt", util.TableToJSON(GhostBan))
 	ply:PrintMessage(HUD_PRINTCONSOLE,"Position unset")
 end)
 
 if file.Exists("ulib","LUA") then return end
 -- You don't use ulx eh ? Well we don't need it after all
+
 GhostBan = GhostBan or {}
 GhostBan.bans = GhostBan.bans or {}
 
@@ -39,7 +42,7 @@ local function timeToString(time)
 	if time > 0 then -- seconds
 		returnString = returnString .. " " .. time .. " " .. GhostBan.Translation[GhostBan.Language]["seconds"]
 	end 
-	return string.TrimLeft(returnString)
+	return string.Trim(returnString)
 end
 
 local function parseText(text, time, reason, callingNick, targetNick)
@@ -59,6 +62,7 @@ local function parseText(text, time, reason, callingNick, targetNick)
 end
 
 hook.Add("PlayerSay", "GhostBan_ChattyPlayer", function(ply, text)
+	text = string.Trim(text)
 	if text == "!ban" then
 		ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["ban_usage"])
 		return
@@ -74,19 +78,23 @@ hook.Add("PlayerSay", "GhostBan_ChattyPlayer", function(ply, text)
 end)
 
 concommand.Add("gh_ban", function(ply, _, args, argStr)
-	if IsValid(ply) && !ply:IsAdmin() then return end
+	if ply:IsValid() && !ply:IsAdmin() then return end
 	if #args == 0 then
 		if IsValid(ply) then
 			ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["ban_usage"])
 		else
-			Msg(GhostBan.Translation[GhostBan.Language]["ghban_usage"] .. "\n")
+			print(GhostBan.Translation[GhostBan.Language]["ghban_usage"])
 		end
 		return
 	end
+
+	args[1] = args[1]:lower()
+	
 	local target_ply
-	for _, v in pairs(player.GetHumans()) do
-		if string.lower(v:Nick()):find(args[1]) then
-			target_ply = v
+	local plys = player.GetHumans()
+	for i=1, #plys do
+		if string.lower(plys[i]:Nick()):find(args[1]) then
+			target_ply = plys[i]
 			break
 		end
 	end
@@ -94,18 +102,19 @@ concommand.Add("gh_ban", function(ply, _, args, argStr)
 		if IsValid(ply) then
 			ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["404"])
 		else
-			Msg(GhostBan.Translation[GhostBan.Language]["404"] .. "\n")
+			print(GhostBan.Translation[GhostBan.Language]["404"])
 		end
 		return
 	end
 	local time = args[2]
-	if !time then
+	if time then
+		time = tonumber(time) * 60
+	else
 		time = 0
 		args[2] = ""
-	else
-		time = tonumber(time) * 60
 	end
 	local tReason = string.Trim(string.Replace(string.Implode(" ",args), args[1] .. " " ..args[2]))
+
 	if !tReason || tReason == "" then 
 		tReason = GhostBan.Translation[GhostBan.Language]["noreason"]
 	end
@@ -122,31 +131,38 @@ concommand.Add("gh_ban", function(ply, _, args, argStr)
 		finalStr = finalStr .. " permanently"
 	end
 	if tReason && tReason ~= "" then finalStr = finalStr .. " ({reason})" end
-	PrintMessage(HUD_PRINTTALK, parseText(finalStr, time, tReason, (IsValid(ply)) && ply:Nick() || "Console", target_ply:Nick()) )
+
+	local textToDisplay = parseText(finalStr, time, tReason, (IsValid(ply)) && ply:Nick() || "Console", target_ply:Nick())
+	PrintMessage(HUD_PRINTTALK, textToDisplay)
+	print(textToDisplay)
 end)
 
 concommand.Add("gh_unban", function(ply, _, args)
-	if IsValid(ply) && !ply:IsAdmin() then return end
+	if ply:IsValid() && !ply:IsAdmin() then return end
 	if #args ~= 1 then
 		if IsValid(ply) then
 			ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["unban_usage"])
 		else
-			Msg(GhostBan.Translation[GhostBan.Language]["ghunban_usage"] .. "\n")
+			print(GhostBan.Translation[GhostBan.Language]["ghunban_usage"])
 		end
 		return
 	end
+
+	args[1] = args[1]:lower()
+
 	local target_ply
-	for _, v in pairs(player.GetHumans()) do
-		if string.lower(v:Nick()):find(args[1]) then
-			target_ply = v
+	local plys = player.GetHumans()
+	for i=1, #plys do
+		if string.lower(plys[i]:Nick()):find(args[1]) then
+			target_ply = plys[i]
 			break
 		end
 	end
-	if !IsValid(target_ply) then
-		if IsValid(ply) then
+	if !target_ply then
+		if ply:IsValid() then
 			ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["404"])
 		else
-			Msg(GhostBan.Translation[GhostBan.Language]["404"] .. "\n")
+			print(GhostBan.Translation[GhostBan.Language]["404"])
 		end
 		return
 	end
@@ -154,12 +170,114 @@ concommand.Add("gh_unban", function(ply, _, args)
 		if IsValid(ply) then
 			ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["404"])
 		else
-			Msg(GhostBan.Translation[GhostBan.Language]["404"] .. "\n")
+			print(GhostBan.Translation[GhostBan.Language]["404"])
 		end
 		return
 	end
 	GhostBan.bans[target_ply:SteamID()] = nil
 	file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
 	target_ply:Ghostban(true)
-	PrintMessage(HUD_PRINTTALK, parseText("{caller} unbanned {target}", nil, nil, (IsValid(ply)) && ply:Nick() || "Console", target_ply:Nick() ) )
+
+	local textToDisplay = parseText("{caller} unbanned {target}", nil, nil, (IsValid(ply)) && ply:Nick() || "Console", target_ply:Nick() )
+	PrintMessage(HUD_PRINTTALK, textToDisplay)
+	print(textToDisplay)
+end)
+
+concommand.Add("gh_banid", function(ply, _, args, argStr)
+	if ply:IsValid() and not ply:IsSuperAdmin() then return end
+	if #args == 0 then
+		if ply:IsValid() then
+			ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["ghbanid_usage"])
+		else
+			print(GhostBan.Translation[GhostBan.Language]["ghbanid_usage"])
+		end
+		return
+	end
+
+	args[1] = (args[1]):upper()
+
+	if not args[1]:match( "^STEAM_%d:%d:%d+$" ) then
+		if ply:IsValid() then
+			ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["invalidSteamid"])
+		else
+			print(GhostBan.Translation[GhostBan.Language]["invalidSteamid"])
+		end
+		return
+	end
+
+	local time = args[2]
+	if time then
+		time = tonumber(time) * 60
+	else
+		time = 0
+		args[2] = ""
+	end
+	local tReason = string.Trim(string.Replace(string.Implode(" ",args), args[1] .. " " ..args[2]))
+
+	if not tReason or tReason == "" then
+		tReason = GhostBan.Translation[GhostBan.Language]["noreason"]
+	end
+
+	GhostBan.bans[args[1]] = {
+		unban = (time == 0) && 0 || os.time() + time,
+		reason = tReason
+	}
+	file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
+
+	local plys = player.GetHumans()
+	for i=1, #plys do
+		if plys[i]:SteamID() == args[1] then
+			plys[i]:Ghostban(false, time, tReason)
+			break
+		end
+	end
+
+	local finalStr = "(GhostBan) {caller} banned steamid {target}"
+	if time > 0 then 
+		finalStr = finalStr .. " for {time}"
+	else
+		finalStr = finalStr .. " permanently"
+	end
+	if tReason && tReason ~= "" then finalStr = finalStr .. " ({reason})" end
+	local textToDisplay = parseText(finalStr, time, tReason, ply:IsValid() && ply:Nick() || "Console", args[1])
+	PrintMessage(HUD_PRINTTALK, textToDisplay)
+	print(textToDisplay)
+end)
+
+concommand.Add("gh_unbanid", function(ply, _, args)
+	if ply:IsValid() and not ply:IsSuperAdmin() then return end
+	if #args == 0 then
+		if ply:IsValid() then
+			ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["unghbanid_usage"])
+		else
+			print(GhostBan.Translation[GhostBan.Language]["unghbanid_usage"])
+		end
+		return
+	end
+
+	args[1] = args[1]:upper()
+	if not args[1]:match( "^STEAM_%d:%d:%d+$" ) then
+		if ply:IsValid() then
+			ply:ChatPrint(GhostBan.Translation[GhostBan.Language]["invalidSteamid"])
+		else
+			print(GhostBan.Translation[GhostBan.Language]["invalidSteamid"])
+		end
+		return
+	end
+
+	GhostBan.bans[args[1]] = nil
+	file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
+
+	local plys = player.GetHumans()
+	for i=1, #plys do
+		if plys[i]:SteamID() == args[1] then
+			plys[i]:Ghostban(true)
+			break
+		end
+	end
+	if tReason and tReason ~= "" then finalStr = finalStr .. " ({reason})" end
+
+	local textToDisplay = parseText("(GhostBan) {caller} unbanned steamid {target}", nil, nil, ply:IsValid() && ply:Nick() || "Console", args[1])
+	PrintMessage(HUD_PRINTTALK, textToDisplay)
+	print(textToDisplay)
 end)
