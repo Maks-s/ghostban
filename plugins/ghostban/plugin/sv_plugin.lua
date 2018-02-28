@@ -2,6 +2,8 @@
 Add /ghostban as a clockwork command
 ---------------------------------------------------------------------------]]
 
+util.AddNetworkString("GhostBan_Clockwork_Commands")
+
 local COMMAND = Clockwork.command:New("ghostban")
 
 COMMAND.tip = "Open Ghostban config menu"
