@@ -55,7 +55,15 @@ function meta:Ghostban(unghost, time, reason)
 			self:DrawShadow(false)
 		end
 		if GhostBan.setPos ~= Vector() then
-			self:SetPos(GhostBan.setPos)
+			local function setGhostPos()
+				if not self:IsConnected() then return end
+				if self:GetPos() == Vector() then -- repeat until player is fully loaded
+					timer.Simple(1, setGhostPos)
+					return
+				end
+				self:SetPos(GhostBan.setPos)
+			end
+			setGhostPos()
 		end
 	else
 		GhostBan.ghosts[self] = nil
@@ -89,7 +97,7 @@ function meta:Ghostban(unghost, time, reason)
 		if !(GhostBan.material == "" || GhostBan.CantSeeMe) then
 			self:SetMaterial()
 		end
-		if GhostBan.setPos ~= Vector() then
+		if GhostBan.setPos ~= Vector() and self:GetPos() ~= Vector() then
 			self:Respawn()
 		end
 	end
