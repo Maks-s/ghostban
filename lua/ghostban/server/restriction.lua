@@ -141,8 +141,10 @@ end
 
 if GhostBan.setPos ~= Vector() then
 	hook.Add("PlayerSpawn","GhostBan_ReturnToPos",function(ply)
-		if GhostBan.ghosts[ply] then
-			ply:SetPos(GhostBan.setPos)
-		end
+		timer.Simple(0, function() -- prevent bug
+			if GhostBan.ghosts[ply] then
+				ply:SetPos(GhostBan.setPos)
+			end
+		end)
 	end)
 end

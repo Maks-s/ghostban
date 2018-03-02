@@ -101,7 +101,7 @@ function meta:Ghostban(unghost, time, reason)
 			self:SetMaterial()
 		end
 		if GhostBan.setPos ~= Vector() and self:GetPos() ~= Vector() then
-			self:Respawn()
+			self:Spawn()
 		end
 	end
 end
