@@ -30,6 +30,7 @@ local function ghostban( calling_ply, target_ply, time, reason )
 			unban = (time == 0) && 0 || os.time() + time,
 			reason = tReason
 		}
+		file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
 	else
 		local callplyName = ( calling_ply:IsValid() and calling_ply:Nick() ) or "Console"
 		sql.Query(
@@ -68,7 +69,7 @@ end
 
 if GhostBan.ReplaceULXBan then
 	timer.Simple(0, function()
-		local ghostbanCmd = ulx.command( "Utility", "ulx ban", ghostban, "!ban", false, false, true )
+		local ghostbanCmd = ulx.command( "Ghostban", "ulx ban", ghostban, "!ban", false, false, true )
 		ghostbanCmd:addParam{ type=ULib.cmds.PlayerArg }
 		ghostbanCmd:addParam{ type=ULib.cmds.NumArg, hint="minutes, 0 for perma", ULib.cmds.optional, ULib.cmds.allowTimeString, min=0 }
 		ghostbanCmd:addParam{ type=ULib.cmds.StringArg, hint="reason", ULib.cmds.optional, ULib.cmds.takeRestOfLine, completes=ulx.common_kick_reasons }
@@ -76,7 +77,7 @@ if GhostBan.ReplaceULXBan then
 		ghostbanCmd:help( "Ghostban target" )
 	end)
 else
-	local ghostbanCmd = ulx.command( "Utility", "ulx ghostban", ghostban, "!ghostban", false, false, true )
+	local ghostbanCmd = ulx.command( "Ghostban", "ulx ghostban", ghostban, "!ghostban", false, false, true )
 	ghostbanCmd:addParam{ type=ULib.cmds.PlayerArg }
 	ghostbanCmd:addParam{ type=ULib.cmds.NumArg, hint="minutes, 0 for perma", ULib.cmds.optional, ULib.cmds.allowTimeString, min=0 }
 	ghostbanCmd:addParam{ type=ULib.cmds.StringArg, hint="reason", ULib.cmds.optional, ULib.cmds.takeRestOfLine, completes=ulx.common_kick_reasons }
@@ -118,6 +119,7 @@ local function ghostbanid( calling_ply, steamid, time, reason )
 			unban = (time == 0) && 0 || os.time() + time,
 			reason = tReason
 		}
+		file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
 	else
 		local callplyName = ( calling_ply:IsValid() and calling_ply:Nick() ) or "Console"
 		sql.Query(
@@ -159,7 +161,7 @@ end
 
 if GhostBan.ReplaceULXBan then
 	timer.Simple(0, function()
-		local ghostbanidCmd = ulx.command( "Utility", "ulx banid", ghostbanid, nil, false, false, true )
+		local ghostbanidCmd = ulx.command( "Ghostban", "ulx banid", ghostbanid, nil, false, false, true )
 		ghostbanidCmd:addParam{ type=ULib.cmds.StringArg, hint="steamid" }
 		ghostbanidCmd:addParam{ type=ULib.cmds.NumArg, hint="minutes, 0 for perma", ULib.cmds.optional, ULib.cmds.allowTimeString, min=0 }
 		ghostbanidCmd:addParam{ type=ULib.cmds.StringArg, hint="reason", ULib.cmds.optional, ULib.cmds.takeRestOfLine, completes=ulx.common_kick_reasons }
@@ -167,7 +169,7 @@ if GhostBan.ReplaceULXBan then
 		ghostbanidCmd:help( "Ghostban target steamid" )
 	end)
 else
-	local ghostbanidCmd = ulx.command( "Utility", "ulx ghostbanid", ghostbanid, nil, false, false, true )
+	local ghostbanidCmd = ulx.command( "Ghostban", "ulx ghostbanid", ghostbanid, nil, false, false, true )
 	ghostbanidCmd:addParam{ type=ULib.cmds.StringArg, hint="steamid" }
 	ghostbanidCmd:addParam{ type=ULib.cmds.NumArg, hint="minutes, 0 for perma", ULib.cmds.optional, ULib.cmds.allowTimeString, min=0 }
 	ghostbanidCmd:addParam{ type=ULib.cmds.StringArg, hint="reason", ULib.cmds.optional, ULib.cmds.takeRestOfLine, completes=ulx.common_kick_reasons }
@@ -186,6 +188,7 @@ local function unghostban( calling_ply, target_ply )
 	end
 	if GhostBan.jailMode then
 		GhostBan.bans[target_ply:SteamID()] = nil
+		file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
 	else
 		ULib.unban(target_ply:SteamID())
 	end
@@ -195,13 +198,13 @@ end
 
 if GhostBan.ReplaceULXBan then
 	timer.Simple(0, function()
-		local unghostbanCmd = ulx.command( "Utility", "ulx unban", unghostban, "!unban", false, false, true )
+		local unghostbanCmd = ulx.command( "Ghostban", "ulx unban", unghostban, "!unban", false, false, true )
 		unghostbanCmd:addParam{ type=ULib.cmds.PlayerArg }
 		unghostbanCmd:defaultAccess( ULib.ACCESS_ADMIN )
 		unghostbanCmd:help( "Unghostban target" )
 	end)
 else
-	local unghostbanCmd = ulx.command( "Utility", "ulx unghostban", unghostban, "!unghostban", false, false, true )
+	local unghostbanCmd = ulx.command( "Ghostban", "ulx unghostban", unghostban, "!unghostban", false, false, true )
 	unghostbanCmd:addParam{ type=ULib.cmds.PlayerArg }
 	unghostbanCmd:defaultAccess( ULib.ACCESS_ADMIN )
 	unghostbanCmd:help( "Unghostban target" )
@@ -225,6 +228,7 @@ local function unghostbanid( calling_ply, steamid )
 
 	if GhostBan.jailMode then
 		GhostBan.bans[steamid] = nil
+		file.Write("ghostban_bans.txt", util.TableToJSON(GhostBan.bans))
 	else
 		ULib.unban(steamid)
 	end
@@ -243,14 +247,25 @@ end
 
 if GhostBan.ReplaceULXBan then
 	timer.Simple(0, function()
-		local unghostbanidCmd = ulx.command( "Utility", "ulx unbanid", unghostbanid, nil, false, false, true )
+		local unghostbanidCmd = ulx.command( "Ghostban", "ulx unbanid", unghostbanid, nil, false, false, true )
 		unghostbanidCmd:addParam{ type=ULib.cmds.StringArg, hint="steamid" }
 		unghostbanidCmd:defaultAccess( ULib.ACCESS_SUPERADMIN )
 		unghostbanidCmd:help( "Unghostban target steamid" )
 	end)
 else
-	local unghostbanidCmd = ulx.command( "Utility", "ulx unghostbanid", unghostbanid, nil, false, false, true )
+	local unghostbanidCmd = ulx.command( "Ghostban", "ulx unghostbanid", unghostbanid, nil, false, false, true )
 	unghostbanidCmd:addParam{ type=ULib.cmds.StringArg, hint="steamid" }
 	unghostbanidCmd:defaultAccess( ULib.ACCESS_SUPERADMIN )
 	unghostbanidCmd:help( "Unghostban target steamid" )
+end
+
+--[[-------------------------------------------------------------------------
+	Detour fancyLog function so ghosts can't annoy players with psay or asay
+---------------------------------------------------------------------------]]
+
+local defaultFancyLog = ulx.fancyLog
+function ulx.fancyLog(...)
+	local ply = { ... }
+	if ply[3] and ply[3]:IsPlayer() and GhostBan.ghosts[ply[3]] and not GhostBan.CanTalkChat then return end
+	defaultFancyLog(...)
 end

@@ -60,9 +60,22 @@ if !GhostBan.CanTalkVoice then
 	end)
 end
 if !GhostBan.CanTalkChat then
-	hook.Add("PlayerSay", "GhostBan_MutePlayer", function(sender)
+	hook.Add("PlayerSay", "GhostBan_MutePlayer", function(sender, text)
 		if GhostBan.ghosts[sender] then return "" end
-	end, HOOK_LOW)
+	end, 2)
+
+	if file.Exists("darkrp/darkrp.txt","LUA") then
+		timer.Simple(1, function() -- detour admin command
+			local defaultAdmin = FAdmin.Commands.List["//"] and FAdmin.Commands.List["//"].callback
+			if not defaultAdmin then return end
+			local function detour(ply, cmd, args)
+				if GhostBan.ghosts[ply] then return true end
+				return defaultAdmin(ply, cmd, args)
+			end
+			FAdmin.Commands.List["//"].callback = detour
+			FAdmin.Commands.List["adminhelp"].callback = detour
+		end)
+	end
 end
 
 -- don't have weapons
@@ -122,6 +135,14 @@ if !GhostBan.canChangeJob && DarkRP then
 	hook.Add("playerCanChangeTeam", "GhostBan_CantChangeJob",function(ply, jobName)
 		if GhostBan.ghosts[ply] then
 			return false, "Ghosts are ghosts, not " .. team.GetName(jobName)
+		end
+	end)
+end
+
+if GhostBan.setPos ~= Vector() then
+	hook.Add("PlayerSpawn","GhostBan_ReturnToPos",function(ply)
+		if GhostBan.ghosts[ply] then
+			ply:SetPos(GhostBan.setPos)
 		end
 	end)
 end

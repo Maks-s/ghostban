@@ -65,6 +65,9 @@ function meta:Ghostban(unghost, time, reason)
 			end
 			setGhostPos()
 		end
+		if GhostBan.Cleanup then
+			cleanup.CC_Cleanup(self,0,{})
+		end
 	else
 		GhostBan.ghosts[self] = nil
 		net.Start("ghost_ban_net")

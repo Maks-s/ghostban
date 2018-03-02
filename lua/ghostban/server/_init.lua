@@ -27,6 +27,7 @@ local function loadConfig(settings)
 		GhostBan.CantSeeMe = settings["seeme"]
 		GhostBan.material = settings["material"]
 		-- GhostBan.SuperHot = settings["superhot"]
+		GhostBan.Cleanup = settings["cleanup"]
 		GhostBan.percentKick = tonumber(settings["kPercent"])
 		if settings["repULX"] then
 			GhostBan.ReplaceULXBan = settings["repULX"]
@@ -65,6 +66,7 @@ local function loadConfig(settings)
 			GhostBan.CantSeeMe,
 			GhostBan.material,
 			GhostBan.percentKick,
+			GhostBan.Cleanup,
 			-- GhostBan.SuperHot
 		})
 		net.Broadcast()
@@ -170,6 +172,7 @@ hook.Add("PlayerAuthed", "GhostBan_TellEmSettings", function(ply)
 		GhostBan.CantSeeMe,
 		GhostBan.material,
 		GhostBan.percentKick,
+		GhostBan.Cleanup,
 		-- GhostBan.SuperHot,
 	})
 	net.Send(ply)

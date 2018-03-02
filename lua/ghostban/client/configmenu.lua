@@ -24,9 +24,12 @@ hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
 			PANEL[name]:DockMargin(5,0,10,5)
 			PANEL[name]:SetValue(value)
 		end
-		createCheckBox("spawnprop", "Ghosts can spawn props", GhostBan.CanSpawnProps)
-		createCheckBox("property", "Ghosts can use property", GhostBan.CanProperty)
-		createCheckBox("tool", "Ghosts can use the toolgun", GhostBan.CanTool)
+		if GAMEMODE.IsSandboxDerived then
+			createCheckBox("spawnprop", "Ghosts can spawn props", GhostBan.CanSpawnProps)
+			createCheckBox("property", "Ghosts can use property", GhostBan.CanProperty)
+			createCheckBox("tool", "Ghosts can use the toolgun", GhostBan.CanTool)
+			createCheckBox("cleanup", "Cleanup ghosts' props", GhostBan.Cleanup)
+		end
 		createCheckBox("voice", "Ghosts can talk with their voice", GhostBan.CanTalkVoice)
 		createCheckBox("tChat", "Ghosts can talk with the chat", GhostBan.CanTalkChat)
 		createCheckBox("loadout", "Ghosts have their weapons when they spawn", GhostBan.Loadouts)
@@ -112,9 +115,6 @@ hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
 			end
 			net.Start("ghost_ban_net")
 			local settings = {
-				['spawnprop'] = PANEL['spawnprop']:GetChecked(),
-				['property'] = PANEL['property']:GetChecked(),
-				['tool'] = PANEL['tool']:GetChecked(),
 				['voice'] = PANEL['voice']:GetChecked(),
 				['tChat'] = PANEL['tChat']:GetChecked(),
 				['loadout'] = PANEL['loadout']:GetChecked(),
@@ -142,6 +142,12 @@ hook.Add("OnPlayerChat", "GhostBan_OpenSettings", function(ply, text)
 			end
 			if DarkRP then
 				settings['changejob'] = PANEL['changeJob']:GetChecked()
+			end
+			if GAMEMODE.IsSandboxDerived then
+				settings['spawnprop'] = PANEL['spawnprop']:GetChecked()
+				settings['property'] = PANEL['property']:GetChecked()
+				settings['tool'] = PANEL['tool']:GetChecked()
+				settings['cleanup'] = PANEL['cleanup']:GetChecked()
 			end
 			net.WriteTable(settings)
 			net.SendToServer()

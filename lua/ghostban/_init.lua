@@ -1,5 +1,9 @@
 GhostBan = GhostBan or {}
 
+--[[-------------------------------------------------------------------------
+	DON'T CHANGE CONFIG IN THIS FILE, USE IN-GAME CONFIG MENU
+---------------------------------------------------------------------------]]
+
 GhostBan.CanHurt = false -- Ghost can hurt other players / entities ( Amityville is back )
 GhostBan.CanSpawnProps = false -- Ghost can spawn props
 GhostBan.CanProperty = false -- Ghost can use property, such as 'remove', 'weld' etc...
@@ -27,6 +31,7 @@ GhostBan.setPos = Vector(0,0,0)
 GhostBan.Language = "EN"
 --GhostBan.SuperHot = false -- Time move only when ghosts move
 GhostBan.percentKick = 0 -- Percent of before kicking ghosts ( in minutes )
+GhostBan.Cleanup = false
 
 -- Translations, text can be replaced by {nick}, {steamid}, {steamid64}
 -- Special for urban: {reason} which display reason of ban, and {timeleft} which display time left

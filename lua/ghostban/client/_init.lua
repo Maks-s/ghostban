@@ -155,7 +155,8 @@ net.Receive("ghost_ban_net",function()
 		GhostBan.CantSeeMe = settings[24]
 		GhostBan.material = settings[25]
 		GhostBan.percentKick = settings[26]
-		--GhostBan.SuperHot = settings[27]
+		GhostBan.Cleanup = settings[27]
+		--GhostBan.SuperHot = settings[28]
 
 		-- ghost can't collide
 		if GhostBan.CanCollide ~= 2 then
