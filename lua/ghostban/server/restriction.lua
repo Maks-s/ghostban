@@ -64,7 +64,7 @@ if !GhostBan.CanTalkChat then
 		if GhostBan.ghosts[sender] then return "" end
 	end, 2)
 
-	if file.Exists("darkrp/darkrp.txt","LUA") then
+	hook.Add("DarkRPFinishedLoading","GhostBan_DetourFAdminCommand",function()
 		timer.Simple(1, function() -- detour admin command
 			local defaultAdmin = FAdmin.Commands.List["//"] and FAdmin.Commands.List["//"].callback
 			if not defaultAdmin then return end
@@ -75,7 +75,7 @@ if !GhostBan.CanTalkChat then
 			FAdmin.Commands.List["//"].callback = detour
 			FAdmin.Commands.List["adminhelp"].callback = detour
 		end)
-	end
+	end)
 end
 
 -- don't have weapons
@@ -131,7 +131,7 @@ if GhostBan.CanCollide ~= 2 then
 	end)
 end
 
-if !GhostBan.canChangeJob && DarkRP then
+if not GhostBan.canChangeJob then
 	hook.Add("playerCanChangeTeam", "GhostBan_CantChangeJob",function(ply, jobName)
 		if GhostBan.ghosts[ply] then
 			return false, "Ghosts are ghosts, not " .. team.GetName(jobName)
