@@ -74,7 +74,7 @@ function meta:Ghostban(unghost, time, reason)
 			cleanup.CC_Cleanup(self,0,{})
 		end
 
-		hook.Run("GhostbanPlyBanned", self, time, reason)		
+		hook.Run("GhostbanGhostedPlayer", self, time, reason)		
 	else
 
 		if hook.Run("GhostbanShouldntUnban", self) then
@@ -116,7 +116,7 @@ function meta:Ghostban(unghost, time, reason)
 			self:Spawn()
 		end
 
-		hook.Run("GhostbanPlyUnbanned", self)		
+		hook.Run("GhostbanUnghostedPlayer", self)		
 	end
 end
 
@@ -129,11 +129,6 @@ end)
 
 if GhostBan.percentKick ~= 0 then
 	hook.Add("CheckPassword","GhostBan_CheckP455w0rd", function(steamid64, ip)
-
-		if hook.Run("GhostbanCheckPassword", steamid64, ip) then
-			return
-		end
-
 		if #player.GetAll() / game.MaxPlayers() <= GhostBan.percentKick / 100 then return end
 		if ULib then
 			local banData = ULib.bans[ util.SteamIDFrom64(steamid64) ]
@@ -144,6 +139,11 @@ if GhostBan.percentKick ~= 0 then
 			if !banData then return end
 			reason = banData.reason || GhostBan.Translation[GhostBan.Language]["TooMuch4U"]
 		end
+
+		if hook.Run("GhostbanCheckPassword", steamid64, ip) then
+			return
+		end
+
 		return false, "You're banned for the following reason :\n" .. reason
 	end)
 end
