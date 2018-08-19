@@ -123,9 +123,13 @@ net.Receive("ghost_ban_net",function()
 		hook.Remove("HUDShouldDraw", "GhostBan_NoHUD4U")
 	elseif mode == 2 then
 		if net.ReadBool() then
-			GhostBan.ghosts[Entity(net.ReadUInt(7) + 1)] = true
+			local ply = Entity(net.ReadUInt(7) + 1)
+			GhostBan.ghosts[ply] = true
+			hook.Run("GhostbanGhostedPlayer", ply)
 		else
-			GhostBan.ghosts[Entity(net.ReadUInt(7) + 1)] = nil
+			local ply = Entity(net.ReadUInt(7) + 1)
+			GhostBan.ghosts[ply] = nil
+			hook.Run("GhostbanUnghostedPlayer", ply)
 		end
 	elseif mode == 3 then
 		local settings = net.ReadTable()

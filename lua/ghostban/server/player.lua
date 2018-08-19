@@ -5,6 +5,11 @@ local meta = FindMetaTable("Player")
 
 function meta:Ghostban(unghost, time, reason)
 	if !unghost then
+
+		if hook.Run("GhostbanShouldntBan", self, time, reason) then
+			return
+		end
+
 		local ghostSentence = GhostBan.Translation[GhostBan.Language]["ghostingS"]
 		ghostSentence = string.Replace(ghostSentence, "{nick}", self:Nick())
 		ghostSentence = string.Replace(ghostSentence, "{steamid}", self:SteamID())
@@ -68,7 +73,14 @@ function meta:Ghostban(unghost, time, reason)
 		if GhostBan.Cleanup then
 			cleanup.CC_Cleanup(self,0,{})
 		end
+
+		hook.Run("GhostbanPlyBanned", self, time, reason)		
 	else
+
+		if hook.Run("GhostbanShouldntUnban", self) then
+			return
+		end
+
 		GhostBan.ghosts[self] = nil
 		net.Start("ghost_ban_net")
 		net.WriteUInt(1,2)
@@ -103,6 +115,8 @@ function meta:Ghostban(unghost, time, reason)
 		if GhostBan.setPos ~= Vector() and self:GetPos() ~= Vector() then
 			self:Spawn()
 		end
+
+		hook.Run("GhostbanPlyUnbanned", self)		
 	end
 end
 
@@ -114,7 +128,12 @@ hook.Add("PlayerConnect", "GhostBan_APlayerIsJoining", function()
 end)
 
 if GhostBan.percentKick ~= 0 then
-	hook.Add("CheckPassword","GhostBan_CheckP455w0rd", function(steamid64)
+	hook.Add("CheckPassword","GhostBan_CheckP455w0rd", function(steamid64, ip)
+
+		if hook.Run("GhostbanCheckPassword", steamid64, ip) then
+			return
+		end
+
 		if #player.GetAll() / game.MaxPlayers() <= GhostBan.percentKick / 100 then return end
 		if ULib then
 			local banData = ULib.bans[ util.SteamIDFrom64(steamid64) ]

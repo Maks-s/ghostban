@@ -148,3 +148,9 @@ if GhostBan.setPos ~= Vector() then
 		end)
 	end)
 end
+
+hook.Add("PrePACConfigApply", "GhostBan_NoSpicyOutfit", function(ply)
+	if GhostBan.ghosts[ply] then
+		return false, "Ghosts don't use spicy outfit"
+	end
+end)

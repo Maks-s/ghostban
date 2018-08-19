@@ -12,7 +12,7 @@ concommand.Add("ghostban_unsetpos",function(ply)
 	ply:PrintMessage(HUD_PRINTCONSOLE,"Position unset")
 end)
 
-if file.Exists("ulib","LUA") then return end
+if file.IsDir("ulib","LUA") then return end
 -- You don't use ulx eh ? Well we don't need it after all
 
 GhostBan = GhostBan or {}
