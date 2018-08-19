@@ -42,10 +42,14 @@ Ghosts can...
 
 # Hooks
 GhostbanGhostedPlayer(player) [client/server] : Ran after a player has been ghostbanned
+
 GhostbanUnghostedPlayer(player) [client/server] : Ran after a player has been unghostbanned
 
+
 GhostbanShouldntBan(player, time, reason) [server] : Return true to prevent ghostbanning
+
 GhostbanShouldntUnban(player) [server] : Return true to prevent unghostbanning
+
 GhostbanCheckPassword(steamid64, IP) [server] : Return true to prevent kick from GhostBan.percentKick
 
 
